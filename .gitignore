@@ -1,0 +1,27 @@
+# Astro build output
+.astro/
+
+# Vite build output
+dist/
+
+# Node modules
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# Prisma local DB files (если есть)
+prisma/*.db
+prisma/*.db-journal
+
+# Log files
+*.log
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# System files
+.DS_Store
+Thumbs.db
+
+.env*

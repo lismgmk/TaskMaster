@@ -1,0 +1,42 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TaskDetail from '../../components/TaskDetail.svelte';
+import { getTaskById } from '../../lib/actions';
+import type { TaskPriority } from '../../lib/types';
+
+// Get task ID from URL params
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/');
+}
+
+// Get task by ID
+const task = await getTaskById(parseInt(id));
+
+// If task not found, redirect to homepage
+if (!task) {
+  return Astro.redirect('/');
+}
+
+// Initialize priorities for the form
+const priorities: TaskPriority[] = ['low', 'medium', 'high'];
+---
+
+<Layout title={`Task: ${task.title}`}>
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="mb-6">
+      <a href="/" class="text-blue-500 hover:underline">
+        &larr; Back to All Tasks
+      </a>
+    </div>
+    
+    <h1 class="text-3xl font-bold mb-8">Task Details</h1>
+    
+    <TaskDetail 
+      client:load 
+      task={task} 
+      priorities={priorities}
+    />
+  </main>
+</Layout>

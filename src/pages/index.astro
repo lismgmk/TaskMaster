@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TaskList from '../components/TaskList.svelte';
+import TaskForm from '../components/TaskForm.svelte';
+import TaskFilters from '../components/TaskFilters.svelte';
+import { getTasks } from '../lib/actions';
+import type { Task, TaskPriority, TaskFilter } from '../lib/types';
+
+// Get all tasks
+const allTasks = await getTasks();
+
+// Initialize filters
+const priorities: TaskPriority[] = ['low', 'medium', 'high'];
+const initialFilter: TaskFilter = {
+  priority: 'all',
+  status: 'all'
+};
+---
+
+<Layout title="Task Manager">
+  <main class="container mx-auto px-4 py-8 max-w-4xl">
+    <h1 class="text-3xl font-bold mb-8 text-center">Task Manager</h1>
+    
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Create New Task</h2>
+      <TaskForm client:load />
+    </div>
+    
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-4">Filters</h2>
+      <TaskFilters 
+        client:load 
+        priorities={priorities} 
+        initialFilter={initialFilter}
+      />
+    </div>
+    
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Your Tasks</h2>
+      <TaskList 
+        client:load 
+        initialTasks={allTasks} 
+        priorities={priorities}
+      />
+    </div>
+  </main>
+</Layout>
