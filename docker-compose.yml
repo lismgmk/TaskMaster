@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   astro-app:
@@ -6,9 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '5000:5000'
     volumes:
-      - ./data:/app/data        # SQLite база сохраняется вне контейнера
+      - ./data:/app/data # SQLite база сохраняется вне контейнера
     environment:
       - NODE_ENV=production
     command: npm run preview

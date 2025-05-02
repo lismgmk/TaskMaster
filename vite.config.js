@@ -4,7 +4,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 export default defineConfig({
   plugins: [
     // Required for testing Svelte components
-    svelte({ hot: !process.env.VITEST }),
+    svelte({ hot: !process.env.VITEST })
   ],
   server: {
     host: '0.0.0.0',
@@ -13,10 +13,7 @@ export default defineConfig({
     hmr: {
       clientPort: 443
     },
-    allowedHosts: [
-      'localhost', 
-      '0.0.0.0',
-    ]
+    allowedHosts: ['localhost', '0.0.0.0']
   },
   test: {
     // Enable the JSdom environment for testing Svelte components
@@ -27,8 +24,8 @@ export default defineConfig({
     // Mock these files using identity proxies
     deps: {
       // Don't inline external dependencies
-      inline: false,
+      inline: false
     },
-    setupFiles: ['./tests/setup.js'],
+    setupFiles: ['./tests/setup.js']
   }
 });

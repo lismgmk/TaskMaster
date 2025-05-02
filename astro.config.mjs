@@ -7,26 +7,27 @@ import node from '@astrojs/node';
 export default defineConfig({
   integrations: [tailwind(), svelte()],
   output: 'server',
+  envPrefix: ['PUBLIC_', 'OPENAI_'],
   adapter: node({
-    mode: 'standalone',
+    mode: 'standalone'
   }),
 
   server: {
     host: '0.0.0.0',
-    port: 5000,
+    port: 5000
   },
   vite: {
     server: {
       hmr: {
-        clientPort: 443,
+        clientPort: 443
       },
       host: '0.0.0.0',
       watch: {
-        usePolling: true,
+        usePolling: true
       },
       strictPort: false,
       cors: true,
-      allowedHosts: ['localhost', '0.0.0.0'],
-    },
-  },
+      allowedHosts: ['localhost', '0.0.0.0']
+    }
+  }
 });

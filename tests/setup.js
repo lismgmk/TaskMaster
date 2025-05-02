@@ -10,7 +10,7 @@ vi.mock('../src/lib/db', () => {
         findMany: vi.fn(),
         findUnique: vi.fn(),
         update: vi.fn(),
-        delete: vi.fn(),
+        delete: vi.fn()
       }
     }
   };

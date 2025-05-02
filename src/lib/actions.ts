@@ -2,136 +2,83 @@ import { z } from 'zod';
 import { prisma } from './db';
 import { taskSchema, taskUpdateSchema } from './schema';
 import type { CreateTaskInput, UpdateTaskInput } from './types';
-
+const baseUrl = import.meta.env.PUBLIC_BASE_URL;
 // Get all tasks
 export async function getTasks() {
-  try {
-    const tasks = await prisma.task.findMany({
-      orderBy: [
-        { completed: 'asc' },
-        { updatedAt: 'desc' }
-      ]
-    });
-    
-    return tasks;
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-    throw new Error('Failed to fetch tasks');
+  const res = await fetch(`${baseUrl}/api/tasks`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Failed to fetch tasks');
   }
+  return res.json();
 }
 
 // Get a task by ID
 export async function getTaskById(id: number) {
-  try {
-    const task = await prisma.task.findUnique({
-      where: { id }
-    });
-    
-    if (!task) {
-      throw new Error(`Task with ID ${id} not found`);
-    }
-    
-    return task;
-  } catch (error) {
-    console.error(`Error fetching task with ID ${id}:`, error);
-    throw new Error(`Failed to fetch task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  const res = await fetch(`${baseUrl}/api/task/${id}`);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Failed to fetch task');
   }
+  return res.json();
 }
 
-// Create a new task
 export async function createTask(input: CreateTaskInput) {
-  try {
-    // Validate input using Zod schema
-    const validatedData = taskSchema.parse(input);
-    
-    // Create the task in the database
-    const task = await prisma.task.create({
-      data: {
-        title: validatedData.title,
-        description: validatedData.description || '',
-        priority: validatedData.priority,
-        dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : null,
-        completed: validatedData.completed || false
-      }
-    });
-    
-    return task;
-  } catch (error) {
-    console.error('Error creating task:', error);
-    
-    if (error instanceof z.ZodError) {
-      // Handle validation errors
-      const errorMessage = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ');
-      throw new Error(`Validation failed: ${errorMessage}`);
-    }
-    
-    throw new Error(`Failed to create task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  const res = await fetch(`${baseUrl}/api/create-task`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input)
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'Failed to create task');
   }
+
+  return await res.json();
 }
 
 // Update a task by ID
 export async function updateTask(id: number, input: UpdateTaskInput) {
-  try {
-    // Validate input using Zod schema
-    const validatedData = taskUpdateSchema.parse(input);
-    
-    // Get current task to ensure it exists
-    const existingTask = await prisma.task.findUnique({
-      where: { id }
-    });
-    
-    if (!existingTask) {
-      throw new Error(`Task with ID ${id} not found`);
-    }
-    
-    // Update the task in the database
-    const updatedTask = await prisma.task.update({
-      where: { id },
-      data: {
-        title: validatedData.title !== undefined ? validatedData.title : undefined,
-        description: validatedData.description !== undefined ? validatedData.description : undefined,
-        priority: validatedData.priority !== undefined ? validatedData.priority : undefined,
-        dueDate: validatedData.dueDate !== undefined ? 
-          (validatedData.dueDate ? new Date(validatedData.dueDate) : null) : 
-          undefined,
-        completed: validatedData.completed !== undefined ? validatedData.completed : undefined
-      }
-    });
-    
-    return updatedTask;
-  } catch (error) {
-    console.error(`Error updating task with ID ${id}:`, error);
-    
-    if (error instanceof z.ZodError) {
-      // Handle validation errors
-      const errorMessage = error.errors.map(err => `${err.path.join('.')}: ${err.message}`).join(', ');
-      throw new Error(`Validation failed: ${errorMessage}`);
-    }
-    
-    throw new Error(`Failed to update task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  const res = await fetch(`${baseUrl}/api/task/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input)
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Failed to update task');
   }
+
+  return res.json();
 }
 
-// Delete a task by ID
 export async function deleteTask(id: number) {
-  try {
-    // Get current task to ensure it exists
-    const existingTask = await prisma.task.findUnique({
-      where: { id }
-    });
-    
-    if (!existingTask) {
-      throw new Error(`Task with ID ${id} not found`);
-    }
-    
-    // Delete the task from the database
-    await prisma.task.delete({
-      where: { id }
-    });
-    
-    return { success: true, message: `Task with ID ${id} deleted successfully` };
-  } catch (error) {
-    console.error(`Error deleting task with ID ${id}:`, error);
-    throw new Error(`Failed to delete task: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  const res = await fetch(`${baseUrl}/api/task/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || 'Failed to delete task');
   }
+
+  return res.json();
+}
+
+export async function generateDescription(title: string): Promise<string> {
+  const res = await fetch(`${baseUrl}/api/generate-description`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Failed to generate description');
+  }
+
+  const data = await res.json();
+  return data.description;
 }
