@@ -5,7 +5,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const data = taskSchema.parse(body); 
+    const data = taskSchema.parse(body);
 
     const task = await prisma.task.create({
       data: {
