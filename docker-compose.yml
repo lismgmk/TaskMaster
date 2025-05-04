@@ -1,14 +1,24 @@
-version: '3.9'
-
+version: "3.9"
 services:
-  astro-app:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '5000:5000'
-    volumes:
-      - ./data:/app/data # SQLite база сохраняется вне контейнера
+      - "4321:4321"
+    depends_on:
+      - db
     environment:
-      - NODE_ENV=production
-    command: npm run preview
+      - DATABASE_URL=file:/db/dev.db
+    volumes:
+      - db_data:/db
+    networks:
+      - app_network
+
+volumes:
+  db_data:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

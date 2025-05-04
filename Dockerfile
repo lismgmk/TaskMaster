@@ -1,24 +1,25 @@
-# 1. Используем официальный Node.js образ
-FROM node:20
-
-# 2. Создаём директорию для приложения
+FROM node:lts AS base
 WORKDIR /app
 
-# 3. Копируем package.json и устанавливаем зависимости
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
+
+FROM base AS prod-deps
+RUN npm install --omit=dev
+
+FROM base AS build-deps
 RUN npm install
 
-# 4. Копируем остальной код
+FROM build-deps AS build
 COPY . .
-
-# 5. Генерируем Prisma клиент
+RUN npm run build
 RUN npx prisma generate
 
-# 6. Собираем Astro проект
-RUN npm run build
+FROM node:lts AS runtime
+WORKDIR /app
+COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 
-# 7. Указываем порт (если SSR)
-EXPOSE 3000
+COPY --from=build /app/prisma ./prisma
 
-# 8. Запускаем сервер
-CMD ["npm", "run", "preview"]
+CMD ["node", "./dist/server/entry.mjs"]

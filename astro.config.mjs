@@ -14,13 +14,13 @@ export default defineConfig({
 
   server: {
     host: import.meta.env.PUBLIC_HOST || '0.0.0.0',
-    port: parseInt(import.meta.env.PUBLIC_PORT || '5000', 10)
+    port: parseInt(import.meta.env.PUBLIC_PORT || '4321', 10)
   },
 
   vite: {
     server: {
       host: import.meta.env.PUBLIC_HOST || '0.0.0.0',
-      port: parseInt(import.meta.env.PUBLIC_PORT || '5000', 10),
+      port: parseInt(import.meta.env.PUBLIC_PORT || '4321', 10),
       strictPort: false,
       cors: true,
       allowedHosts: ['localhost', '0.0.0.0'],
