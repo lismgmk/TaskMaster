@@ -1,19 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { Task, TaskPriority } from '../lib/types';
-  import { updateTask, deleteTask } from '../lib/actions';
+  import { deleteTask, updateTask } from 'src/pages/api';
 
   export let task: Task;
   export let priorities: TaskPriority[] = [];
 
-  const dispatch = createEventDispatcher();
 
   let loading = false;
   let error = '';
   let isEditing = false;
   let editedTask = { ...task };
 
-  // Get priority color class
   function getPriorityColor(priority: TaskPriority): string {
     switch (priority) {
       case 'high':
@@ -27,7 +24,6 @@
     }
   }
 
-  // Format date to readable string
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -37,7 +33,6 @@
     });
   }
 
-  // Toggle task completed status
   async function toggleCompleted() {
     loading = true;
     error = '';
@@ -49,7 +44,6 @@
 
       task = updatedTask;
 
-      // Dispatch custom event for parent components
       window.dispatchEvent(
         new CustomEvent('taskUpdated', {
           detail: updatedTask
@@ -62,7 +56,6 @@
     }
   }
 
-  // Handle task deletion
   async function handleDelete() {
     if (!confirm('Are you sure you want to delete this task?')) return;
 
@@ -72,7 +65,6 @@
     try {
       await deleteTask(task.id);
 
-      // Dispatch custom event for parent components
       window.dispatchEvent(
         new CustomEvent('taskDeleted', {
           detail: task.id
@@ -85,18 +77,15 @@
     }
   }
 
-  // Start editing mode
   function startEditing() {
     editedTask = { ...task };
     isEditing = true;
   }
 
-  // Cancel editing mode
   function cancelEditing() {
     isEditing = false;
   }
 
-  // Save edited task
   async function saveEdits() {
     loading = true;
     error = '';
@@ -106,7 +95,6 @@
       task = updatedTask;
       isEditing = false;
 
-      // Dispatch custom event for parent components
       window.dispatchEvent(
         new CustomEvent('taskUpdated', {
           detail: updatedTask
@@ -208,7 +196,6 @@
       </div>
     </div>
   {:else}
-    <!-- View mode -->
     <div class="flex items-start">
       <input
         type="checkbox"

@@ -2,30 +2,27 @@
   import { onMount } from 'svelte';
   import TaskItem from './TaskItem.svelte';
   import type { Task, TaskPriority, TaskFilter } from '../lib/types';
-  import { getTasks } from '../lib/actions';
+  import { getTasks } from 'src/pages/api';
 
   export let initialTasks: Task[] = [];
   export let priorities: TaskPriority[] = [];
-
+  export const prerender = false;
   let tasks = initialTasks;
   let filteredTasks = tasks;
   let filter: TaskFilter = { priority: 'all', status: 'all' };
   let loading = false;
   let error = '';
 
-  // Subscribe to custom event for filter changes
   function handleFilterChange(event: CustomEvent<TaskFilter>) {
     filter = event.detail;
     applyFilters();
   }
 
-  // Subscribe to custom event for task deletion
   function handleTaskDeleted(event: CustomEvent<number>) {
     tasks = tasks.filter((task) => task.id !== event.detail);
     applyFilters();
   }
 
-  // Subscribe to custom event for task updates
   function handleTaskUpdated(event: CustomEvent<Task>) {
     const index = tasks.findIndex((t) => t.id === event.detail.id);
     if (index !== -1) {
@@ -35,13 +32,11 @@
     }
   }
 
-  // Subscribe to custom event for new task creation
   function handleTaskCreated(event: CustomEvent<Task>) {
     tasks = [event.detail, ...tasks];
     applyFilters();
   }
 
-  // Apply filters to tasks
   function applyFilters() {
     filteredTasks = tasks.filter((task) => {
       const priorityMatch =
@@ -55,7 +50,6 @@
     });
   }
 
-  // Refresh tasks from server
   async function refreshTasks() {
     loading = true;
     error = '';
@@ -70,7 +64,6 @@
   }
 
   onMount(() => {
-    // Listen for custom events from other components
     window.addEventListener(
       'filterChange',
       handleFilterChange as EventListener
@@ -79,11 +72,9 @@
     window.addEventListener('taskUpdated', handleTaskUpdated as EventListener);
     window.addEventListener('taskCreated', handleTaskCreated as EventListener);
 
-    // Apply initial filters
     applyFilters();
 
     return () => {
-      // Clean up event listeners
       window.removeEventListener(
         'filterChange',
         handleFilterChange as EventListener

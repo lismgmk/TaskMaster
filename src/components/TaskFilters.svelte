@@ -9,12 +9,9 @@
   let isMounted = false;
   let filter: TaskFilter = { ...initialFilter };
 
-  // Apply filters when they change
   function applyFilters() {
-    // Dispatch local event
     dispatch('filterChange', filter);
 
-    // Dispatch global event for other components only if we're in the browser
     if (isMounted && typeof window !== 'undefined') {
       window.dispatchEvent(
         new CustomEvent('filterChange', {
@@ -24,20 +21,16 @@
     }
   }
 
-  // Reset filters to initial state
   function resetFilters() {
     filter = { ...initialFilter };
     applyFilters();
   }
 
-  // Use onMount to ensure we're in the browser
   onMount(() => {
     isMounted = true;
-    // Initial application of filters in browser
     applyFilters();
   });
 
-  // Watch for filter changes, but only apply if mounted
   $: if (isMounted) {
     filter, applyFilters();
   }

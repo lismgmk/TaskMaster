@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { createTask, generateDescription } from '../lib/actions';
-  import type { Task, TaskPriority } from '../lib/types';
+  import { createTask, generateDescription } from 'src/pages/api';
+  import type { TaskPriority } from '../lib/types';
   export const prerender = false;
-  // Initialize form state
   let title = '';
   let description = '';
   let priority: TaskPriority = 'medium';
@@ -12,10 +11,8 @@
   let error = '';
   let success = false;
 
-  // Available priorities
   const priorities: TaskPriority[] = ['low', 'medium', 'high'];
 
-  // Reset form to initial state
   function resetForm() {
     title = '';
     description = '';
@@ -24,7 +21,6 @@
     error = '';
   }
 
-  // Handle form submission
   async function handleSubmit() {
     loading = true;
     error = '';
@@ -45,20 +41,16 @@
         completed: false
       });
 
-      // Display success message
       success = true;
 
-      // Reset form
       resetForm();
 
-      // Dispatch custom event for parent components
       window.dispatchEvent(
         new CustomEvent('taskCreated', {
           detail: newTask
         })
       );
 
-      // Clear success message after 3 seconds
       setTimeout(() => {
         success = false;
       }, 3000);

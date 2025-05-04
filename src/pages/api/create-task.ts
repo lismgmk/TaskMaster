@@ -1,12 +1,11 @@
-// src/pages/api/create-task.ts
 import { prisma } from '@lib/db';
 import { taskSchema } from '@lib/schema';
 import type { APIRoute } from 'astro';
-
+export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const data = taskSchema.parse(body); // валидация Zod
+    const data = taskSchema.parse(body); 
 
     const task = await prisma.task.create({
       data: {

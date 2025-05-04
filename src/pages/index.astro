@@ -1,20 +1,20 @@
 ---
+
 import Layout from '../layouts/Layout.astro';
 import TaskList from '../components/TaskList.svelte';
 import TaskForm from '../components/TaskForm.svelte';
 import TaskFilters from '../components/TaskFilters.svelte';
-import { getTasks } from '../lib/actions';
-import type { Task, TaskPriority, TaskFilter } from '../lib/types';
-
-// Get all tasks
+import type { TaskPriority, TaskFilter } from '../lib/types';
+import { getTasks } from './api';
 const allTasks = await getTasks();
+export const prerender = false;
 
-// Initialize filters
 const priorities: TaskPriority[] = ['low', 'medium', 'high'];
 const initialFilter: TaskFilter = {
   priority: 'all',
   status: 'all'
 };
+
 ---
 
 <Layout title="Task Manager">

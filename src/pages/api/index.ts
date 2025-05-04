@@ -1,9 +1,8 @@
-import { z } from 'zod';
-import { prisma } from './db';
-import { taskSchema, taskUpdateSchema } from './schema';
-import type { CreateTaskInput, UpdateTaskInput } from './types';
+import type { CreateTaskInput, UpdateTaskInput } from '@lib/types';
 const baseUrl = import.meta.env.PUBLIC_BASE_URL;
-// Get all tasks
+export const prerender = false;
+
+
 export async function getTasks() {
   const res = await fetch(`${baseUrl}/api/tasks`);
   if (!res.ok) {
@@ -13,7 +12,6 @@ export async function getTasks() {
   return res.json();
 }
 
-// Get a task by ID
 export async function getTaskById(id: number) {
   const res = await fetch(`${baseUrl}/api/task/${id}`);
   if (!res.ok) {
@@ -38,7 +36,6 @@ export async function createTask(input: CreateTaskInput) {
   return await res.json();
 }
 
-// Update a task by ID
 export async function updateTask(id: number, input: UpdateTaskInput) {
   const res = await fetch(`${baseUrl}/api/task/${id}`, {
     method: 'PATCH',

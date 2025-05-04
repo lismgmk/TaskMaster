@@ -1,5 +1,5 @@
 import { prisma } from '@lib/db';
-
+export const prerender = false;
 export async function GET() {
   try {
     const tasks = await prisma.task.findMany({

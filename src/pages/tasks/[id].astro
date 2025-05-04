@@ -1,25 +1,21 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import TaskDetail from '../../components/TaskDetail.svelte';
-import { getTaskById } from '../../lib/actions';
 import type { TaskPriority } from '../../lib/types';
-
-// Get task ID from URL params
+import { getTaskById } from '../api';
+export const prerender = false;
 const { id } = Astro.params;
 
 if (!id) {
   return Astro.redirect('/');
 }
 
-// Get task by ID
 const task = await getTaskById(parseInt(id));
 
-// If task not found, redirect to homepage
 if (!task) {
   return Astro.redirect('/');
 }
 
-// Initialize priorities for the form
 const priorities: TaskPriority[] = ['low', 'medium', 'high'];
 ---
 

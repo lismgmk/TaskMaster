@@ -1,7 +1,7 @@
 import { prisma } from '@lib/db';
 import { taskUpdateSchema } from '@lib/schema';
 import { z } from 'astro/zod';
-
+export const prerender = false;
 export async function GET({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
   if (isNaN(id)) {

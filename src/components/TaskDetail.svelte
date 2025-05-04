@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import type { Task, TaskPriority } from '../lib/types';
-  import { updateTask, deleteTask } from '../lib/actions';
-
+  import { deleteTask, updateTask } from 'src/pages/api';
+  export const prerender = false;
   export let task: Task;
   export let priorities: TaskPriority[] = [];
 
@@ -11,7 +10,6 @@
   let error = '';
   let success = false;
 
-  // Format date to readable string
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -21,7 +19,6 @@
     });
   }
 
-  // Get priority color class
   function getPriorityColor(priority: TaskPriority): string {
     switch (priority) {
       case 'high':
@@ -35,7 +32,6 @@
     }
   }
 
-  // Handle form submission
   async function handleSubmit() {
     loading = true;
     error = '';
@@ -46,7 +42,6 @@
       task = updatedTask;
       success = true;
 
-      // Clear success message after 3 seconds
       setTimeout(() => {
         success = false;
       }, 3000);
@@ -57,7 +52,6 @@
     }
   }
 
-  // Toggle task completed status
   async function toggleCompleted() {
     loading = true;
     error = '';
@@ -76,7 +70,6 @@
     }
   }
 
-  // Handle task deletion
   async function handleDelete() {
     if (!confirm('Are you sure you want to delete this task?')) return;
 
@@ -92,7 +85,6 @@
     }
   }
 
-  // Update the editedTask when the task prop changes
   $: task, (editedTask = { ...task });
 </script>
 
